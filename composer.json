@@ -1,0 +1,38 @@
+{
+	"name": "leuchtdiode/mezzio-assets",
+	"description": "Mezzio assets module",
+	"type": "library",
+	"license": "MIT",
+	"homepage": "https://try2catch.com",
+	"authors": [
+		{
+			"name": "Alex Schloegl",
+			"email": "alex@try2catch.com",
+			"homepage": "https://try2catch.com",
+			"role": "Developer"
+		}
+	],
+	"keywords": [
+		"Mezzio",
+		"Module",
+		"Assets",
+		"Files"
+	],
+	"require": {
+		"php": "~8.3.0 || ~8.4.0",
+		"leuchtdiode/mezzio-common": "^1.0.0",
+		"laminas/laminas-router": "^3.14.0",
+		"ramsey/uuid-doctrine": "^2.1.0",
+		"laminas/laminas-diactoros": "^3.6.0",
+		"psr/http-server-handler": "^1.0.0",
+		"mezzio/mezzio-router": "^3.18.0"
+	},
+	"suggest": {
+		"ext-imagick": "Webp processor needs ImageMagick"
+	},
+	"autoload": {
+		"psr-4": {
+			"Assets\\": "src/"
+		}
+	}
+}
