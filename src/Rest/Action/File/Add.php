@@ -62,7 +62,7 @@ class Add extends Base
 						->getValue()
 				)
 				->setSize(
-					$values
+					(string)$values
 						->get(AddData::SIZE)
 						->getValue()
 				)
