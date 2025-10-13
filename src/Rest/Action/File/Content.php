@@ -9,6 +9,7 @@ use Assets\File\Provider;
 use Assets\File\Type\ProcessData;
 use Assets\File\Type\Processor;
 use Assets\Rest\Action\Base;
+use DateTime;
 use Exception;
 use Laminas\Diactoros\Response;
 use Psr\Container\ContainerExceptionInterface;
@@ -98,14 +99,26 @@ class Content extends Base
 
 		$outputFileName = $request->getAttribute('fileName') . '.' . $request->getAttribute('extension');
 
+		$headers = [
+			'Content-disposition' => 'inline; filename=' . $outputFileName,
+			'Content-type'        => $typeConfig['mimeType'] ?? $file->getMimeType(),
+			'Content-size'        => strlen($content),
+		];
+
+		if (($cacheTimeInSeconds = $this->config['assets']['file']['cacheTimeInSeconds'] ?? null))
+		{
+			$headers['Cache-Control'] = 'public, max-age=' . $cacheTimeInSeconds;
+			$headers['ETag']          = md5($content);
+			$headers['Pragma']        = '';
+			$headers['Expires']       = (new DateTime())
+				->modify('+' . $cacheTimeInSeconds . ' seconds')
+				->format('D, d M Y H:i:s \G\M\T');
+		}
+
 		return new Response\TextResponse(
-			$content,
-			200,
-			[
-				'Content-disposition' => 'inline; filename=' . $outputFileName,
-				'Content-type'        => $typeConfig['mimeType'] ?? $file->getMimeType(),
-				'Content-size'        => strlen($content),
-			]
+			text: $content,
+			status: 200,
+			headers: $headers
 		);
 	}
 }

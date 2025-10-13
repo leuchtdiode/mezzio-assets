@@ -12,7 +12,8 @@ return [
 
 	'assets' => [
 		'file' => [
-			'processor' => [
+			'cacheTimeInSeconds' => 0, // 0 = no cache
+			'processor'          => [
 				Type::ORIGINAL => [
 					'processor' => NullProcessor::class,
 				],
