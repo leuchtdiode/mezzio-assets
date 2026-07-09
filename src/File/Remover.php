@@ -38,6 +38,12 @@ class Remover
 			unlink($path);
 		}
 
+		// delete all variants as well
+		foreach (glob($path . '.*') as $variantPath)
+		{
+			unlink($variantPath);
+		}
+
 		$this->entityDeleter->delete($entity);
 
 		$result->setSuccess(true);
