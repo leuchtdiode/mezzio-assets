@@ -13,11 +13,11 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Get extends Base
 {
-	private Provider $provider;
-
-	public function __construct(Provider $provider)
+	public function __construct(
+		private readonly array $config,
+		private readonly Provider $provider
+	)
 	{
-		$this->provider = $provider;
 	}
 
 	/**
@@ -25,6 +25,11 @@ class Get extends Base
 	 */
 	public function executeAction(ServerRequestInterface $request): ResponseInterface
 	{
+		if (!$this->isEnabled($this->config))
+		{
+			return $this->notFound();
+		}
+
 		$file = $this->provider->byId(
 			$request->getAttribute('fileId')
 		);

@@ -11,6 +11,9 @@ use Ramsey\Uuid\Doctrine\UuidType;
 return [
 
 	'assets' => [
+		'rest' => [
+			'enabled' => true,
+		],
 		'file' => [
 			'cacheTimeInSeconds' => 0, // 0 = no cache
 			'processor'          => [

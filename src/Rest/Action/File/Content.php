@@ -36,6 +36,11 @@ class Content extends Base
 	 */
 	public function executeAction(ServerRequestInterface $request): ResponseInterface
 	{
+		if (!$this->isEnabled($this->config))
+		{
+			return $this->notFound();
+		}
+
 		$file = $this->fileProvider->byId(
 			$request->getAttribute('fileId')
 		);

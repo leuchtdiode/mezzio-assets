@@ -16,6 +16,7 @@ use Throwable;
 class Add extends Base
 {
 	public function __construct(
+		private readonly array $config,
 		private readonly AddData $data,
 		private readonly Adder $adder
 	)
@@ -27,6 +28,11 @@ class Add extends Base
 	 */
 	public function executeAction(ServerRequestInterface $request): ResponseInterface
 	{
+		if (!$this->isEnabled($this->config))
+		{
+			return $this->notFound();
+		}
+
 		$values = $this->data
 			->setRequest($request)
 			->getValues();

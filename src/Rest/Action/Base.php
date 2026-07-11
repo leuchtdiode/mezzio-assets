@@ -19,6 +19,11 @@ abstract class Base implements RequestHandlerInterface
 		return $this->executeAction($request);
 	}
 
+	protected function isEnabled(array $config): bool
+	{
+		return $config['assets']['rest']['enabled'];
+	}
+
 	protected function notFound(): ResponseInterface
 	{
 		return new EmptyResponse(404);
