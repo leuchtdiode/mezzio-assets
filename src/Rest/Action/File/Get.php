@@ -6,10 +6,10 @@ namespace Assets\Rest\Action\File;
 use Assets\File\Provider;
 use Assets\Rest\Action\Base;
 use Assets\Rest\Action\Response;
+use Common\Action\ExecuteActionParams;
 use Common\Hydration\ObjectToArrayHydrator;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 class Get extends Base
 {
@@ -23,12 +23,14 @@ class Get extends Base
 	/**
 	 * @throws Exception
 	 */
-	public function executeAction(ServerRequestInterface $request): ResponseInterface
+	public function executeAction(ExecuteActionParams $params): ResponseInterface
 	{
 		if (!$this->isEnabled($this->config))
 		{
 			return $this->notFound();
 		}
+
+		$request = $params->getRequest();
 
 		$file = $this->provider->byId(
 			$request->getAttribute('fileId')

@@ -9,6 +9,7 @@ use Assets\File\Provider;
 use Assets\File\Type\ProcessData;
 use Assets\File\Type\Processor;
 use Assets\Rest\Action\Base;
+use Common\Action\ExecuteActionParams;
 use DateTime;
 use Exception;
 use Laminas\Diactoros\Response;
@@ -16,7 +17,6 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 class Content extends Base
 {
@@ -34,12 +34,14 @@ class Content extends Base
 	 * @throws NotFoundExceptionInterface
 	 * @throws Exception
 	 */
-	public function executeAction(ServerRequestInterface $request): ResponseInterface
+	public function executeAction(ExecuteActionParams $params): ResponseInterface
 	{
 		if (!$this->isEnabled($this->config))
 		{
 			return $this->notFound();
 		}
+
+		$request = $params->getRequest();
 
 		$file = $this->fileProvider->byId(
 			$request->getAttribute('fileId')
@@ -115,7 +117,7 @@ class Content extends Base
 			$headers['Cache-Control'] = 'public, max-age=' . $cacheTimeInSeconds;
 			$headers['ETag']          = md5($content);
 			$headers['Pragma']        = '';
-			$headers['Expires']       = (new DateTime())
+			$headers['Expires']       = new DateTime()
 				->modify('+' . $cacheTimeInSeconds . ' seconds')
 				->format('D, d M Y H:i:s \G\M\T');
 		}

@@ -3,22 +3,14 @@ declare(strict_types=1);
 
 namespace Assets\Rest\Action;
 
+use Common\Action\BaseAction;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  */
-abstract class Base implements RequestHandlerInterface
+abstract class Base extends BaseAction
 {
-	abstract public function executeAction(ServerRequestInterface $request): ResponseInterface;
-
-	public function handle(ServerRequestInterface $request): ResponseInterface
-	{
-		return $this->executeAction($request);
-	}
-
 	protected function isEnabled(array $config): bool
 	{
 		return $config['assets']['rest']['enabled'];

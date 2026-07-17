@@ -8,9 +8,9 @@ use Assets\File\AddData as FileAddData;
 use Assets\File\Adder;
 use Assets\Rest\Action\Base;
 use Assets\Rest\Action\Response;
+use Common\Action\ExecuteActionParams;
 use Common\Hydration\ObjectToArrayHydrator;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
 class Add extends Base
@@ -26,12 +26,14 @@ class Add extends Base
 	/**
 	 * @throws Throwable
 	 */
-	public function executeAction(ServerRequestInterface $request): ResponseInterface
+	public function executeAction(ExecuteActionParams $params): ResponseInterface
 	{
 		if (!$this->isEnabled($this->config))
 		{
 			return $this->notFound();
 		}
+
+		$request = $params->getRequest();
 
 		$values = $this->data
 			->setRequest($request)

@@ -20,12 +20,12 @@
 	],
 	"require": {
 		"php": "~8.4.0 || ~8.5.0",
-		"leuchtdiode/mezzio-common": "^1.2.0",
 		"laminas/laminas-router": "^3.19.0",
-		"ramsey/uuid-doctrine": "^2.1.0",
 		"laminas/laminas-diactoros": "^3.8.0",
-		"psr/http-server-handler": "^1.0.0",
-		"mezzio/mezzio-router": "^3.20.0"
+		"leuchtdiode/mezzio-common": "^2.0.0",
+		"mezzio/mezzio-router": "^3.20.0",
+		"ramsey/uuid-doctrine": "^2.1.0",
+		"psr/http-server-handler": "^1.0.0"
 	},
 	"suggest": {
 		"ext-imagick": "Webp processor needs ImageMagick"
