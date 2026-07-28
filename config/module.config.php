@@ -43,23 +43,13 @@ return [
 	],
 
 	'doctrine' => [
-		'configuration' => [
-			'orm_default' => [
-				'types' => [
-					UuidType::NAME => UuidType::class,
-				],
-			],
+		'types'  => [
+			UuidType::NAME => UuidType::class,
 		],
-		'driver'        => [
-			'assets_entities' => [
+		'driver' => [
+			'orm_default' => [
 				'class' => AttributeDriver::class,
-				'cache' => 'array',
 				'paths' => [ __DIR__ . '/../src/Db' ],
-			],
-			'orm_default'     => [
-				'drivers' => [
-					'Assets' => 'assets_entities',
-				],
 			],
 		],
 	],
