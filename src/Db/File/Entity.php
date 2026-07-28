@@ -5,6 +5,7 @@ namespace Assets\Db\File;
 
 use Common\Db\Entity as DbEntity;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
 use Ramsey\Uuid\Uuid;
@@ -28,7 +29,7 @@ class Entity implements DbEntity
 	private string $mimeType;
 
 	#[ORM\Column(type: 'datetime')]
-	private DateTime $createdDate;
+	private DateTimeInterface $createdDate;
 
 	/**
 	 * @throws Exception
@@ -79,12 +80,12 @@ class Entity implements DbEntity
 		$this->mimeType = $mimeType;
 	}
 
-	public function getCreatedDate(): DateTime
+	public function getCreatedDate(): DateTimeInterface
 	{
 		return $this->createdDate;
 	}
 
-	public function setCreatedDate(DateTime $createdDate): void
+	public function setCreatedDate(DateTimeInterface $createdDate): void
 	{
 		$this->createdDate = $createdDate;
 	}

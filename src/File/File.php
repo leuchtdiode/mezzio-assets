@@ -8,7 +8,7 @@ use Assets\File\Url\Url;
 use Common\Dto\Dto;
 use Common\Hydration\ArrayHydratable;
 use Common\Hydration\ObjectToArrayHydratorProperty;
-use DateTime;
+use DateTimeInterface;
 use Ramsey\Uuid\UuidInterface;
 
 class File implements Dto, ArrayHydratable
@@ -63,7 +63,7 @@ class File implements Dto, ArrayHydratable
 	}
 
 	#[ObjectToArrayHydratorProperty]
-	public function getCreatedDate(): DateTime
+	public function getCreatedDate(): DateTimeInterface
 	{
 		return $this->entity->getCreatedDate();
 	}
