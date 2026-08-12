@@ -75,20 +75,12 @@ class Content extends Base
 			throw new Exception('Invalid processor given');
 		}
 
-		$memoryLimit       = MemoryUtil::getMemoryLimitInBytes();
-		$fileSize          = (int)$file->getSize();
-		$targetMemoryLimit = $fileSize * 2;
-
-		// set memory limit twice the size of the file size to avoid memory leaks
-		if ($targetMemoryLimit > $memoryLimit)
-		{
-			ini_set('memory_limit', round($targetMemoryLimit / 1000 / 1024) . 'M');
-		}
-
 		$pathWithType = $path . '.' . $type;
 
 		if (!file_exists($pathWithType))
 		{
+			$this->raiseMemoryLimit((int)$file->getSize());
+
 			$processResult = $processor->process(
 				ProcessData::create()
 					->setFile($file)
@@ -101,15 +93,17 @@ class Content extends Base
 		}
 		else
 		{
+			$this->raiseMemoryLimit((int)filesize($pathWithType));
+
 			$content = file_get_contents($pathWithType);
 		}
 
 		$outputFileName = $request->getAttribute('fileName') . '.' . $request->getAttribute('extension');
 
 		$headers = [
-			'Content-disposition' => 'inline; filename=' . $outputFileName,
-			'Content-type'        => $typeConfig['mimeType'] ?? $file->getMimeType(),
-			'Content-size'        => strlen($content),
+			'Content-Disposition' => 'inline; filename=' . $outputFileName,
+			'Content-Type'        => $typeConfig['mimeType'] ?? $file->getMimeType(),
+			'Content-Length'      => (string)strlen($content),
 		];
 
 		if (($cacheTimeInSeconds = $this->config['assets']['file']['cacheTimeInSeconds'] ?? null))
@@ -127,5 +121,28 @@ class Content extends Base
 			status: 200,
 			headers: $headers
 		);
+	}
+
+	/**
+	 * Raise the memory limit to twice the given size, as the content is held in memory as a whole.
+	 */
+	private function raiseMemoryLimit(int $sizeInBytes): void
+	{
+		$memoryLimit = MemoryUtil::getMemoryLimitInBytes();
+
+		// already unlimited, nothing to raise
+		if ($memoryLimit < 0)
+		{
+			return;
+		}
+
+		$targetMemoryLimit = $sizeInBytes * 2;
+
+		if ($targetMemoryLimit <= $memoryLimit)
+		{
+			return;
+		}
+
+		ini_set('memory_limit', (int)ceil($targetMemoryLimit / 1024 / 1024) . 'M');
 	}
 }
