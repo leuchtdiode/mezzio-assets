@@ -16,11 +16,9 @@ return HttpRouteCreator::create()
 				->setAction(Add::class),
 			'single-item' => HttpRouteCreator::create()
 				->setRoute('/:fileId')
-				->setConstraints(
-					[
-						'file' => '.{36}',
-					]
-				)
+				->setConstraints([
+					'fileId' => '.{36}',
+				])
 				->setMayTerminate(false)
 				->setChildRoutes(
 					[
