@@ -31,7 +31,13 @@ class Remover
 
 		$entity = $file->getEntity();
 
+		// resolve the path while the entity is still readable, deleting it may detach it
 		$path = $this->pathProvider->byEntity($entity);
+
+		// the row goes first on purpose: the foreign keys pointing at assets_files are ON DELETE RESTRICT,
+		// so a file that is still referenced makes this throw and the bytes stay where they are. Unlinking
+		// first would destroy the file and leave the row behind pointing at nothing.
+		$this->entityDeleter->delete($entity);
 
 		if (file_exists($path))
 		{
@@ -43,8 +49,6 @@ class Remover
 		{
 			unlink($variantPath);
 		}
-
-		$this->entityDeleter->delete($entity);
 
 		$result->setSuccess(true);
 
