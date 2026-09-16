@@ -37,7 +37,7 @@ readonly class WebpProcessor implements Processor
 		$im->pingImage($path);
 		$im->readImage($path);
 		$im->setImageFormat('webp');
-		$im->setOption('webp:method', $options['method']);
+		$im->setOption('webp:method', (string)$options['method']);
 		$im->setImageCompressionQuality($options['compressionQuality']);
 
 		$result->setContent(
