@@ -22,6 +22,7 @@
 		"php": "~8.4.0 || ~8.5.0",
 		"laminas/laminas-router": "^3.19.0",
 		"laminas/laminas-diactoros": "^3.8.0",
+		"laminas/laminas-httphandlerrunner": "^2.13.0",
 		"leuchtdiode/mezzio-common": "^2.0.0",
 		"mezzio/mezzio-router": "^3.20.0",
 		"ramsey/uuid-doctrine": "^2.1.0",

@@ -4,8 +4,10 @@ namespace Assets;
 use Assets\File\Type\NullProcessor;
 use Assets\File\Type\Type;
 use Assets\File\Type\WebpProcessor;
+use Assets\Http\StreamEmitterDelegator;
 use Common\Router\HttpRouteCreator;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
+use Laminas\HttpHandlerRunner\Emitter\EmitterInterface;
 use Ramsey\Uuid\Doctrine\UuidType;
 
 return [
@@ -57,6 +59,11 @@ return [
 	'dependencies' => [
 		'abstract_factories' => [
 			DefaultFactory::class,
+		],
+		'delegators'         => [
+			EmitterInterface::class => [
+				StreamEmitterDelegator::class,
+			],
 		],
 	],
 ];

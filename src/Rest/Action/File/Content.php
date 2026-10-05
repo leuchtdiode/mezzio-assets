@@ -8,11 +8,11 @@ use Assets\File\Filesystem\PathProvider;
 use Assets\File\Provider;
 use Assets\File\Type\ProcessData;
 use Assets\File\Type\Processor;
+use Assets\Http\FileResponse;
 use Assets\Rest\Action\Base;
 use Common\Action\ExecuteActionParams;
 use DateTime;
 use Exception;
-use Laminas\Diactoros\Response;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -75,9 +75,9 @@ class Content extends Base
 			throw new Exception('Invalid processor given');
 		}
 
-		$pathWithType = $path . '.' . $type;
+		$servePath = $path . '.' . $type;
 
-		if (!file_exists($pathWithType))
+		if (!file_exists($servePath))
 		{
 			$this->raiseMemoryLimit((int)$file->getSize());
 
@@ -87,44 +87,42 @@ class Content extends Base
 					->setOptions($typeConfig['options'] ?? [])
 			);
 
-			$content = $processResult->getContent();
-
-			file_put_contents($pathWithType, $content);
+			if (($processedPath = $processResult->getPath()))
+			{
+				// processor did not create new content (e.g. original file), so no copy is needed
+				$servePath = $processedPath;
+			}
+			else
+			{
+				file_put_contents($servePath, $processResult->getContent());
+			}
 		}
-		else
-		{
-			$this->raiseMemoryLimit((int)filesize($pathWithType));
 
-			$content = file_get_contents($pathWithType);
-		}
-
-		$outputFileName = $request->getAttribute('fileName') . '.' . $request->getAttribute('extension');
-
-		$headers = [
-			'Content-Disposition' => 'inline; filename=' . $outputFileName,
-			'Content-Type'        => $typeConfig['mimeType'] ?? $file->getMimeType(),
-			'Content-Length'      => (string)strlen($content),
-		];
+		$response = new FileResponse(
+			$servePath,
+			$request->getAttribute('fileName') . '.' . $request->getAttribute('extension'),
+			$typeConfig['mimeType'] ?? $file->getMimeType()
+		);
 
 		if (($cacheTimeInSeconds = $this->config['assets']['file']['cacheTimeInSeconds'] ?? null))
 		{
-			$headers['Cache-Control'] = 'public, max-age=' . $cacheTimeInSeconds;
-			$headers['ETag']          = md5($content);
-			$headers['Pragma']        = '';
-			$headers['Expires']       = new DateTime()
-				->modify('+' . $cacheTimeInSeconds . ' seconds')
-				->format('D, d M Y H:i:s \G\M\T');
+			$response = $response
+				->withHeader('Cache-Control', 'public, max-age=' . $cacheTimeInSeconds)
+				->withHeader('ETag', md5($servePath . filemtime($servePath) . filesize($servePath)))
+				->withHeader('Pragma', '')
+				->withHeader(
+					'Expires',
+					new DateTime()
+						->modify('+' . $cacheTimeInSeconds . ' seconds')
+						->format('D, d M Y H:i:s \G\M\T')
+				);
 		}
 
-		return new Response\TextResponse(
-			text: $content,
-			status: 200,
-			headers: $headers
-		);
+		return $response;
 	}
 
 	/**
-	 * Raise the memory limit to twice the given size, as the content is held in memory as a whole.
+	 * Raise the memory limit to twice the given size, as processed content is held in memory as a whole.
 	 */
 	private function raiseMemoryLimit(int $sizeInBytes): void
 	{

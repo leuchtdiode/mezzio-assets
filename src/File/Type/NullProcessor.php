@@ -17,13 +17,11 @@ readonly class NullProcessor implements Processor
 	{
 		$result = new ProcessResult();
 
-		$result->setContent(
-			file_get_contents(
-				$this->pathProvider->byEntity(
-					$data
-						->getFile()
-						->getEntity()
-				)
+		$result->setPath(
+			$this->pathProvider->byEntity(
+				$data
+					->getFile()
+					->getEntity()
 			)
 		);
 
